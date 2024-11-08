@@ -36,13 +36,6 @@ This is a microservices-based e-commerce backend system built with Spring Boot. 
 
 ### Prerequisites
 
-#### Option 1 (Docker):
-
-- Docker & Docker Compose
-- Git
-
-#### Option 2 (Local Development):
-
 - JDK 17
 - Maven
 - Docker & Docker Compose (for databases and Kafka)
@@ -50,42 +43,6 @@ This is a microservices-based e-commerce backend system built with Spring Boot. 
 - IDE (IntelliJ IDEA recommended)
 
 ### Running Locally
-
-#### Option 1: Running with Docker (Recommended for Quick Start)
-
-1. Clone the Repository
-
-```bash
-git clone https://github.com/XUANL19/shopping-backend.git
-cd shopping-backend
-```
-
-2. Build and Start All Services
-
-```bash
-docker-compose up --build
-```
-
-This will:
-
-- Start all required databases (MySQL, MongoDB, Cassandra)
-- Start Kafka and Zookeeper
-- Build and start all microservices
-
-The services will be available at:
-
-- Account Service: http://localhost:8081
-- Item Service: http://localhost:8082
-- Order Service: http://localhost:8083
-- Payment Service: http://localhost:8084
-
-To stop all services:
-
-```bash
-docker-compose down
-```
-
-#### Option 2: Local Development with IDE
 
 1. Clone the Repository
 
@@ -141,6 +98,13 @@ mvn spring-boot:run
 cd payment-service
 mvn spring-boot:run
 ```
+
+The services will be available at:
+
+- Account Service: http://localhost:8081
+- Item Service: http://localhost:8082
+- Order Service: http://localhost:8083
+- Payment Service: http://localhost:8084
 
 ## Database Schemas
 
