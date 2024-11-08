@@ -7,10 +7,7 @@ import com.shopping.payment.dto.PaymentResponseDto;
 import com.shopping.payment.dto.PaymentStatusUpdateDto;
 import com.shopping.payment.dto.PaymentUpdateDto;
 import com.shopping.payment.entity.Payment;
-import com.shopping.payment.exception.DuplicatePaymentException;
-import com.shopping.payment.exception.InvalidPaymentException;
-import com.shopping.payment.exception.PaymentNotFoundException;
-import com.shopping.payment.exception.UnauthorizedPaymentAccessException;
+import com.shopping.payment.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -90,7 +87,7 @@ public class PaymentService {
         Payment savedPayment = paymentRepository.save(payment);
 
         // Send Kafka message
-        sendPaymentStatusUpdate(savedPayment);
+        sendPaymentStatusUpdatetoKafka(savedPayment);
 
         return mapToResponseDto(savedPayment);
     }
@@ -106,9 +103,13 @@ public class PaymentService {
             throw new UnauthorizedPaymentAccessException(PaymentConstants.ErrorMessages.UNAUTHORIZED_PAYMENT_ACCESS);
         }
 
-        // Check if payment is already successful
+        // Check if payment can be updated
         if (PaymentConstants.PaymentStatus.PAYMENT_SUCCESSFUL.equals(payment.getPaymentStatus())) {
-            throw new InvalidPaymentException(PaymentConstants.ErrorMessages.SUCCESSFUL_PAYMENT_UPDATE_NOT_ALLOWED);
+            throw new InvalidPaymentStatusException(PaymentConstants.ErrorMessages.SUCCESSFUL_PAYMENT_UPDATE_NOT_ALLOWED);
+        }
+
+        if (PaymentConstants.PaymentStatus.USER_CANCELED.equals(payment.getPaymentStatus())) {
+            throw new InvalidPaymentStatusException(PaymentConstants.ErrorMessages.CANCELED_PAYMENT_UPDATE_NOT_ALLOWED);
         }
 
         // Update payment information
@@ -122,7 +123,7 @@ public class PaymentService {
         Payment updatedPayment = paymentRepository.save(payment);
 
         // Send Kafka message
-        sendPaymentStatusUpdate(updatedPayment);
+        sendPaymentStatusUpdatetoKafka(updatedPayment);
 
         return mapToResponseDto(updatedPayment);
     }
@@ -140,6 +141,23 @@ public class PaymentService {
         return mapToResponseDto(payment);
     }
 
+    @Transactional
+    public void cancelPaymentByOrderStatusKafkaMessage(String orderId) {
+        Payment payment = paymentRepository.findByOrderId(UUID.fromString(orderId))
+                .orElseThrow(() -> new PaymentNotFoundException(
+                        String.format(PaymentConstants.ErrorMessages.ORDER_PAYMENT_NOT_FOUND, orderId)));
+
+        // Check if payment can be canceled
+        if (PaymentConstants.PaymentStatus.PAYMENT_SUCCESSFUL.equals(payment.getPaymentStatus())) {
+            throw new InvalidPaymentStatusException(PaymentConstants.ErrorMessages.SUCCESSFUL_PAYMENT_CANCEL_NOT_ALLOWED);
+        }
+
+        payment.setPaymentStatus(PaymentConstants.PaymentStatus.USER_CANCELED);
+        payment.setUpdatedAt(LocalDateTime.now());
+
+        paymentRepository.save(payment);
+        log.info("Payment status updated to USER_CANCELED for order: {}", orderId);
+    }
 
     private void validatePaymentData(PaymentRequestDto requestDto) {
         // Validate card number
@@ -216,7 +234,7 @@ public class PaymentService {
         }
     }
 
-    private void sendPaymentStatusUpdate(Payment payment) {
+    private void sendPaymentStatusUpdatetoKafka(Payment payment) {
         PaymentStatusUpdateDto statusUpdate = createStatusUpdate(payment);
         try {
             kafkaTemplate.send(TOPIC_PAYMENT_STATUS, payment.getOrderId().toString(), statusUpdate)

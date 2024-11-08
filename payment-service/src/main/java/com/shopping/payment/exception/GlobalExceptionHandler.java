@@ -69,6 +69,18 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(InvalidPaymentStatusException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleInvalidPaymentStatusException(
+            InvalidPaymentStatusException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponseDto.<Void>builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .message(ex.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidationExceptions(
             MethodArgumentNotValidException ex,

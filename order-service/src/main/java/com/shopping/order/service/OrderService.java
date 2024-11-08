@@ -29,38 +29,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public PageResponseDto<OrderResponseDto> getOrdersByUserId(UUID userId, PageRequestDto pageRequest) {
-        pageRequest.validate();
-
-        Slice<Order> orderSlice = orderRepository.findByUserId(
-                userId,
-                PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize())
-        );
-
-        List<OrderResponseDto> orderDtos = orderSlice.getContent().stream()
-                .map(this::mapToOrderResponseDto)
-                .collect(Collectors.toList());
-
-        PageResponseDto<OrderResponseDto> response = new PageResponseDto<>();
-        response.setContent(orderDtos);
-        response.setPageNumber(orderSlice.getNumber());
-        response.setPageSize(orderSlice.getSize());
-        response.setHasNext(orderSlice.hasNext());
-        // manually calculate totalElements and totalPages
-        long totalElements = orderRepository.countByUserId(userId);
-        response.setTotalElements(totalElements);
-        response.setTotalPages((int) Math.ceil((double) totalElements / pageRequest.getPageSize()));
-
-        return response;
-    }
-
-    public OrderResponseDto getOrderById(String orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(
-                        String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
-        return mapToDto(order);
-    }
-
     @Transactional
     public OrderResponseDto createOrder(CreateOrderRequestDto requestDto, String idempotencyKey) {
         try {
@@ -102,8 +70,118 @@ public class OrderService {
         }
     }
 
+    public PageResponseDto<OrderResponseDto> getOrdersByUserId(UUID userId, PageRequestDto pageRequest) {
+        pageRequest.validate();
+
+        Slice<Order> orderSlice = orderRepository.findByUserId(
+                userId,
+                PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize())
+        );
+
+        List<OrderResponseDto> orderDtos = orderSlice.getContent().stream()
+                .map(this::mapToOrderResponseDto)
+                .collect(Collectors.toList());
+
+        PageResponseDto<OrderResponseDto> response = new PageResponseDto<>();
+        response.setContent(orderDtos);
+        response.setPageNumber(orderSlice.getNumber());
+        response.setPageSize(orderSlice.getSize());
+        response.setHasNext(orderSlice.hasNext());
+        // manually calculate totalElements and totalPages
+        long totalElements = orderRepository.countByUserId(userId);
+        response.setTotalElements(totalElements);
+        response.setTotalPages((int) Math.ceil((double) totalElements / pageRequest.getPageSize()));
+
+        return response;
+    }
+
+    public OrderResponseDto getOrderById(String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(
+                        String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+        return mapToDto(order);
+    }
+
     @Transactional
-    public void updateOrderStatus(PaymentStatusUpdateDto statusUpdate) {
+    public OrderResponseDto updateOrderItems(String orderId, OrderUpdateDto updateDto) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(
+                        String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+
+        if (OrderStatus.PAID.equals(order.getOrderStatus())) {
+            throw new InvalidOrderStatusException("Cannot update items for a paid order");
+        }
+
+        if (OrderStatus.USER_CANCELED.equals(order.getOrderStatus())) {
+            throw new InvalidOrderStatusException("Cannot update items for a user-canceled order");
+        }
+
+        List<OrderItem> newItems = updateDto.getItems().stream()
+                .map(this::mapToOrderItem)
+                .collect(Collectors.toList());
+
+        order.setItems(newItems);
+        order.setUpdatedAt(LocalDateTime.now());
+
+        Order savedOrder = orderRepository.save(order);
+        return mapToOrderResponseDto(savedOrder);
+    }
+
+    @Transactional
+    public OrderResponseDto cancelOrder(String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(
+                        String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+
+        if (OrderStatus.PAID.equals(order.getOrderStatus())) {
+            throw new InvalidOrderStatusException("Cannot cancel a paid order");
+        }
+
+        if (OrderStatus.USER_CANCELED.equals(order.getOrderStatus())) {
+            throw new InvalidOrderStatusException("Order has already been canceled");
+        }
+
+        order.setOrderStatus(OrderStatus.USER_CANCELED);
+        order.setUpdatedAt(LocalDateTime.now());
+
+        Order savedOrder = orderRepository.save(order);
+
+        // Send kafka message about order cancellation
+        sendOrderStatusUpdateToKafka(savedOrder);
+
+        return mapToOrderResponseDto(savedOrder);
+    }
+
+    private void sendOrderStatusUpdateToKafka(Order order) {
+        OrderEventDto eventDto = OrderEventDto.builder()
+                .orderId(order.getOrderId())
+                .userId(order.getUserId())
+                .orderStatus(order.getOrderStatus())
+                .items(order.getItems().stream()
+                        .map(item -> OrderItemDto.builder()
+                                .upc(item.getUpc())
+                                .purchaseCount(item.getPurchaseCount())
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+
+        try {
+            kafkaTemplate.send("order-status-updates", order.getOrderId(), eventDto)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            log.error("Failed to send order status update: {}", ex.getMessage());
+                        } else {
+                            log.info("Order status update sent for order: {}", order.getOrderId());
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending order status update: {}", e.getMessage());
+            throw new RuntimeException("Failed to send order status update", e);
+        }
+    }
+
+    @Transactional
+    public void updateOrderStatusByPaymentStatusKafkaMessage(PaymentStatusUpdateDto statusUpdate) {
         Order order = orderRepository.findById(statusUpdate.getOrderId())
                 .orElseThrow(() -> new OrderNotFoundException(
                         String.format(ErrorMessages.ORDER_NOT_FOUND, statusUpdate.getOrderId())));

@@ -64,6 +64,21 @@ public class OrderController {
                 .build());
     }
 
+    @PutMapping("/{orderId}/items")
+    public ResponseEntity<ApiResponseDto<OrderResponseDto>> updateOrderItems(
+            @PathVariable String orderId,
+            @Valid @RequestBody OrderUpdateDto updateDto) {
+        OrderResponseDto order = orderService.updateOrderItems(orderId, updateDto);
+        return ResponseEntity.ok(ApiResponseDto.success("Order items updated successfully", order));
+    }
+
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiResponseDto<OrderResponseDto>> cancelOrder(
+            @PathVariable String orderId) {
+        OrderResponseDto order = orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(ApiResponseDto.success("Order canceled successfully", order));
+    }
+
     @DeleteMapping("/{orderId}")
     public ResponseEntity<ApiResponseDto<Void>> deleteOrder(@PathVariable String orderId) {
         orderService.deleteOrder(orderId);

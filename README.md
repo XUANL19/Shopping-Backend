@@ -171,67 +171,82 @@ The services will be available at:
 
 ## Event-Driven Architecture
 
-### Payment Status Flow
+### Order Status Updates (Topic: order-status-updates)
 
-1. Payment Service → Order Service
-
-- Payment successful
+Order Service sends messages about order status changes:
 
 ```json
 {
-  "orderId": "UUID",
-  "status": "PAID",
-  "reason": "Payment Successful"
+    "orderId": "UUID",
+    "userId": "UUID",
+    "orderStatus": "PAID / CANCELED",
+    "items": [
+        {
+            "upc": "long",
+            "purchaseCount": "integer"
+        }
+    ]
 }
 ```
 
-- Payment failed
+#### Consumers:
 
+1. **Item Service**
+    - Listens for: "PAID" status
+    - Action: Decreases inventory for each item in the order
+
+2. **Payment Service**
+    - Listens for: "USER_CANCELED" status
+    - Action: Updates payment status to "User Canceled"
+
+### Payment Status Updates (Topic: payment-status-updates)
+
+Payment Service sends messages about payment status changes:
+
+1. **Payment Successful**
 ```json
 {
-  "orderId": "UUID",
-  "status": "PAYMENT_FAILED",
-  "reason": "Insufficient Funds"
+    "orderId": "UUID",
+    "status": "PAID"
+    "reason": "Payment Successful"
 }
 ```
 
-- Cancelled payment
-
+2. **Payment Failed**
 ```json
 {
-  "orderId": "UUID",
-  "status": "CANCELLED",
-  "reason": "Fraudulent Transaction"
+    "orderId": "UUID",
+    "status": "PAYMENT_FAILED",
+    "reason": "Insufficient Funds"
 }
 ```
 
-- Payment needs retry
-
+3. **Payment Cancelled**
 ```json
 {
-  "orderId": "UUID",
-  "status": "REPAY_NEEDED",
-  "reason": "Chargeback Initiated"
+    "orderId": "UUID",
+    "status": "CANCELLED",
+    "reason": "Fraudulent Transaction"
 }
 ```
 
-### Order Status Flow
-
-Order Service → Item Service
-
+4. **Payment Needs Retry**
 ```json
 {
-  "orderId": "UUID",
-  "userId": "UUID",
-  "orderStatus": "PAID",
-  "items": [
-    {
-      "upc": "long",
-      "purchaseCount": "integer"
-    }
-  ]
+    "orderId": "UUID",
+    "status": "REPAY_NEEDED",
+    "reason": "Chargeback Initiated"
 }
 ```
+
+#### Consumers:
+
+1. **Order Service**
+    - Updates order status based on payment status:
+        - "Payment Successful" → Order status: "PAID"
+        - "Insufficient Funds" → Order status: "PAYMENT_FAILED"
+        - "Fraudulent Transaction" → Order status: "CANCELLED"
+        - "Chargeback Initiated" → Order status: "REPAY_NEEDED"
 
 ### Event Processing Logic
 
@@ -244,8 +259,3 @@ Order Service → Item Service
      - "Insufficient Funds": 20%
      - "Fraudulent Transaction": 20%
      - "Chargeback Initiated": 20%
-
-2. **Order Status Updates**
-   - Order Service sends order status to topic "order-status-updates"
-   - Item Service listens for "PAID" status
-   - When order is "PAID", Item Service updates inventory counts

@@ -69,6 +69,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ResponseEntity<ApiResponseDto<Object>> handleInvalidOrderStatusException(
+            InvalidOrderStatusException ex, HttpServletRequest request) {
+        ApiResponseDto<Object> response = ApiResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseDto<Map<String, String>>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {

@@ -22,7 +22,7 @@ public class PaymentStatusListener {
     public void handlePaymentStatusUpdate(PaymentStatusUpdateDto statusUpdate) {
         try {
             log.info("Received payment status update: {}", statusUpdate);
-            orderService.updateOrderStatus(statusUpdate);
+            orderService.updateOrderStatusByPaymentStatusKafkaMessage(statusUpdate);
             log.info("Successfully processed payment status update for order: {}",
                     statusUpdate.getOrderId());
         } catch (OrderNotFoundException ex) {

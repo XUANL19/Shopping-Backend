@@ -35,7 +35,7 @@ public class PaymentController {
             @Valid @RequestBody PaymentUpdateDto updateRequest) {
         UUID currentUserId = SecurityUtils.getCurrentUserId();
         PaymentResponseDto response = paymentService.updatePayment(paymentId, updateRequest, currentUserId);
-        return ResponseEntity.ok(ApiResponseDto.success("Payment updated successfully", response));
+        return ResponseEntity.ok(ApiResponseDto.success("Payment info updated", response));
     }
 
     @GetMapping("/{paymentId}")
@@ -43,6 +43,6 @@ public class PaymentController {
             @PathVariable UUID paymentId) {
         UUID currentUserId = SecurityUtils.getCurrentUserId();
         PaymentResponseDto payment = paymentService.getPaymentById(paymentId, currentUserId);
-        return ResponseEntity.ok(ApiResponseDto.success("Payment info updated", payment));
+        return ResponseEntity.ok(ApiResponseDto.success("Successfully get Payment info", payment));
     }
 }
