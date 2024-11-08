@@ -1,0 +1,592 @@
+{
+	"info": {
+		"_postman_id": "99cec512-6c47-4a04-b32b-74d482c59dac",
+		"name": "Shopping Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17879761",
+		"_collection_link": "https://dark-rocket-380475.postman.co/workspace/New-Team-Workspace~58880261-52eb-4a00-9d03-97f86ebf68c6/collection/17879761-99cec512-6c47-4a04-b32b-74d482c59dac?action=share&source=collection_link&creator=17879761"
+	},
+	"item": [
+		{
+			"name": "Account Service",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"8443295412Lx.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"xli199911@gmail.com\",\r\n    \"password\": \"8443295412Lx.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/signin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Item Service",
+			"item": [
+				{
+					"name": "Create an Item",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMwOTQ1NTQ5LCJleHAiOjE3MzEwMzE5NDl9.DBU6-g98HrJHjXMbvDHM6MU6QRgSbhQMA6CJ6ukHmqc"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"upc\": 3341245254513334,\n    \"itemName\": \"starbuks\",\n    \"price\": 2.59,\n    \"purchaseLimit\": 1000,\n    \"category\": \"drink\",\n    \"inventory\": 1000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/api/items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all items",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/api/items?pageSize=10&pageNumber=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "pageNumber",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get item by UPC",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/api/items/upc/134124125453",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items",
+								"upc",
+								"134124125453"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search items by name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/api/items/search?name=coke&pageSize=10&pageNumber=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "coke"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "pageNumber",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get items by category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/api/items/category/drink?pageSize=10&pageNumber=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items",
+								"category",
+								"drink"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "pageNumber",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update an item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"price\": 1.59, \n    \"purchaseLimit\": 1000,\n    \"inventory\": 2000\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/api/items/upc/43412452553",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items",
+								"upc",
+								"43412452553"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an item",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/api/items/upc/3341245254513334",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"items",
+								"upc",
+								"3341245254513334"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Service",
+			"item": [
+				{
+					"name": "Create order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "123e4567-e89b-12d3-a456-4266141740006",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"90e74279-5375-4fb9-81c9-5d61969af51b\",\n    \"items\": [\n        {\n            \"upc\": 43412452553,\n            \"purchaseCount\": 1\n        }\n        ,\n        {\n            \"upc\": 134124125453,\n            \"purchaseCount\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8083/api/orders/10682740-7797-40f2-9084-b1072ba385f3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"orders",
+								"10682740-7797-40f2-9084-b1072ba385f3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders by user ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8083/api/orders/user/90e74279-5375-4fb9-81c9-5d61969af51b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"orders",
+								"user",
+								"90e74279-5375-4fb9-81c9-5d61969af51b"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "pageNumber",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an order",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDIyMzgxLCJleHAiOjE3MzExMDg3ODF9.UIFwn8csjBmjZksR7d96HCJyycWvWPTGtKuefpUsQJc"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8083/api/orders/f565d6b3-a0bb-4cb0-8033-ccd88a3e6e83",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"orders",
+								"f565d6b3-a0bb-4cb0-8033-ccd88a3e6e83"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment Service",
+			"item": [
+				{
+					"name": "Create Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDI2MTk5LCJleHAiOjE3MzExMTI1OTl9.dzRRqUmikSVYOFEVaYQBNdIMTtN5X7az6M4GFzmHpH8"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "123e4567-e89b-12d3-a456-4266141740008"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderId\": \"10682740-7797-40f2-9084-b1072ba385f3\",\n    \"paymentCard\": \"4400677539913532\",\n    \"expiration\": \"0125\",\n    \"cvv\": \"123\",\n    \"billingAddress\": \"100 East Ave\",\n    \"zip\": \"10001\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8084/api/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"api",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDI2MTk5LCJleHAiOjE3MzExMTI1OTl9.dzRRqUmikSVYOFEVaYQBNdIMTtN5X7az6M4GFzmHpH8"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8084/api/payments/22b26762-e240-487b-a8a0-4a850fbd89c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"api",
+								"payments",
+								"22b26762-e240-487b-a8a0-4a850fbd89c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Payment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI5MGU3NDI3OS01Mzc1LTRmYjktODFjOS01ZDYxOTY5YWY1MWIiLCJzdWIiOiJ4bGkxOTk5MTFAZ21haWwuY29tIiwiaWF0IjoxNzMxMDI2MTk5LCJleHAiOjE3MzExMTI1OTl9.dzRRqUmikSVYOFEVaYQBNdIMTtN5X7az6M4GFzmHpH8"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentCard\": \"4400677539913533\",\n    \"expiration\": \"0226\",\n    \"cvv\": \"4526\",\n    \"billingAddress\": \"200 West Ave\",\n    \"zip\": \"11002\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8084/api/payments/95a76f09-088b-4a13-85c6-91fd8835a36c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"api",
+								"payments",
+								"95a76f09-088b-4a13-85c6-91fd8835a36c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

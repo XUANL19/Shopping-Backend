@@ -259,3 +259,7 @@ Payment Service sends messages about payment status changes:
      - "Insufficient Funds": 20%
      - "Fraudulent Transaction": 20%
      - "Chargeback Initiated": 20%
+
+## API Testing by Postman
+
+Import file `Shopping Backend.postman_collection` in project root path within Postman to test all APIs.
