@@ -6,12 +6,11 @@ This is a microservices-based e-commerce backend system built with Spring Boot. 
 
 ### Key Features
 
-- **Microservices Architecture**: Separate services for accounts, items, orders, and payments
+- **Microservices Architecture**: Separate services for accounts, items, orders, and payments. Each microservice has its own dedicated database
 - **Event-Driven**: Using Kafka for asynchronous communication between services
 - **Multiple Databases**: Different databases optimized for each service's needs
 - **JWT Authentication**: Secure API endpoints with JWT tokens
 - **Idempotency**: Handling duplicate requests safely
-- **Database per Service**: Each microservice has its own dedicated database
 
 ### Services Architecture
 
