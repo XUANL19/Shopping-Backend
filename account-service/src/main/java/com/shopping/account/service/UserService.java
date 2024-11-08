@@ -28,10 +28,10 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        String token = jwtUtils.generateToken(user.getEmail());
-        return new AuthResponseDto(token, user.getEmail());
+        String token = jwtUtils.generateToken(savedUser.getEmail(), savedUser.getId());
+        return new AuthResponseDto(token, savedUser.getEmail(), savedUser.getId());
     }
 
     public AuthResponseDto signin(SignInRequestDto request) {
@@ -42,7 +42,7 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        String token = jwtUtils.generateToken(user.getEmail());
-        return new AuthResponseDto(token, user.getEmail());
+        String token = jwtUtils.generateToken(user.getEmail(), user.getId());
+        return new AuthResponseDto(token, user.getEmail(), user.getId());
     }
 }
