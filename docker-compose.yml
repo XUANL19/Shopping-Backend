@@ -98,6 +98,71 @@ services:
     networks:
       - shopping_network
 
+  # Application Services
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+    container_name: shopping_account_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - account-mysql
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://account-mysql:3306/account_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - shopping_network
+
+  item-service:
+    build:
+      context: ./item-service
+      dockerfile: Dockerfile
+    container_name: shopping_item_service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongodb
+      - kafka
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - shopping_network
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    container_name: shopping_order_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - cassandra
+      - kafka
+    environment:
+      SPRING_CASSANDRA_CONTACT_POINTS: cassandra
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - shopping_network
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    container_name: shopping_payment_service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - payment-mysql
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/payment_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - shopping_network
+
 volumes:
   account_mysql_data:
   payment_mysql_data:
