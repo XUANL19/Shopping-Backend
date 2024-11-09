@@ -179,7 +179,7 @@ Order Service sends messages about order status changes:
 {
     "orderId": "UUID",
     "userId": "UUID",
-    "orderStatus": "PAID / CANCELED",
+    "orderStatus": "PAID / USER_CANCELED",
     "items": [
         {
             "upc": "long",
