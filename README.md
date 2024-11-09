@@ -263,3 +263,7 @@ Payment Service sends messages about payment status changes:
 ## API Testing by Postman
 
 Import file `Shopping Backend.postman_collection` in project root path within Postman to test all APIs.
+
+## Test Coverage
+
+![Test Coverage](./Test-Coverage.png)
